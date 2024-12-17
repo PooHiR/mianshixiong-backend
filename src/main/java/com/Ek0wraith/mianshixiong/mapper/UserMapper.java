@@ -4,11 +4,11 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.Ek0wraith.mianshixiong.model.entity.User;
 
 /**
- * 用户数据库操作
- *
- * @author <a href="https://github.com/PooHiR">Ek0wraith</a>
- * @from <a href="https://Ek0wraith.top">Ek0wraith的个人博客</a>
- */
+* @author Ek0wraith
+* @description 针对表【user(用户)】的数据库操作Mapper
+* @createDate 2024-12-18 00:02:16
+* @Entity generator.domain.User
+*/
 public interface UserMapper extends BaseMapper<User> {
 
 }
