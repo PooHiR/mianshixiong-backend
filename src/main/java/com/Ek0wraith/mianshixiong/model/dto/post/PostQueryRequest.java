@@ -10,7 +10,7 @@ import lombok.EqualsAndHashCode;
  * 查询请求
  *
  * @author <a href="https://github.com/PooHiR">Ek0wraith</a>
- * @from <a href="https://Ek0wraith.top">编程导航知识星球</a>
+ * @from <a href="https://Ek0wraith.top">Ek0wraith的个人博客</a>
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
