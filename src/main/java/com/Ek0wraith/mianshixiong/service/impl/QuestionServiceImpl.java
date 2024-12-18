@@ -1,7 +1,15 @@
 package com.Ek0wraith.mianshixiong.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import com.Ek0wraith.mianshixiong.annotation.AuthCheck;
+import com.Ek0wraith.mianshixiong.common.BaseResponse;
+import com.Ek0wraith.mianshixiong.common.ResultUtils;
+import com.Ek0wraith.mianshixiong.constant.UserConstant;
+import com.Ek0wraith.mianshixiong.model.entity.QuestionBankQuestion;
+import com.Ek0wraith.mianshixiong.service.QuestionBankQuestionService;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.Ek0wraith.mianshixiong.common.ErrorCode;
@@ -20,10 +28,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,6 +49,9 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
 
     @Resource
     private UserService userService;
+
+    @Resource
+    QuestionBankQuestionService questionBankQuestionService;
 
     /**
      * 校验数据
@@ -184,6 +195,40 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
 
         questionVOPage.setRecords(questionVOList);
         return questionVOPage;
+    }
+
+    /**
+     * 分页获取题目列表（仅管理员可用）
+     *
+     * @param questionQueryRequest
+     * @return
+     */
+    public Page<Question> listQuestionByPage(@RequestBody QuestionQueryRequest questionQueryRequest) {
+        long current = questionQueryRequest.getCurrent();
+        long size = questionQueryRequest.getPageSize();
+
+        // 题目表的查询条件
+        QueryWrapper<Question> queryWrapper = this.getQueryWrapper(questionQueryRequest);
+
+        // 根据题库查询题目列表接口
+        Long questionBankId = questionQueryRequest.getQuestionBankId();
+        if(questionBankId != null){
+            //查询题库中的题目id
+            LambdaQueryWrapper<QuestionBankQuestion> LambdaQueryWrapper = Wrappers.lambdaQuery(QuestionBankQuestion.class)
+                    .select(QuestionBankQuestion::getQuestionId)
+                    .eq(QuestionBankQuestion::getQuestionBankId, questionBankId);
+            List<QuestionBankQuestion> questionlist = questionBankQuestionService.list(LambdaQueryWrapper);
+            if(CollUtil.isNotEmpty(questionlist)){
+                // 取出题目 id 集合
+                Set<Long> questionIdSet = questionlist.stream().map(QuestionBankQuestion::getQuestionId)
+                        .collect(Collectors.toSet());
+                queryWrapper.in("id", questionIdSet);
+            }
+        }
+
+        // 查询数据库
+        Page<Question> questionPage = this.page(new Page<>(current, size), queryWrapper);
+        return questionPage;
     }
 
 }

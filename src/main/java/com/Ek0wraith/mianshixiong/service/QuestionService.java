@@ -1,11 +1,13 @@
 package com.Ek0wraith.mianshixiong.service;
 
+import com.Ek0wraith.mianshixiong.common.BaseResponse;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.Ek0wraith.mianshixiong.model.dto.question.QuestionQueryRequest;
 import com.Ek0wraith.mianshixiong.model.entity.Question;
 import com.Ek0wraith.mianshixiong.model.vo.QuestionVO;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -50,4 +52,12 @@ public interface QuestionService extends IService<Question> {
      * @return
      */
     Page<QuestionVO> getQuestionVOPage(Page<Question> questionPage, HttpServletRequest request);
+
+    /**
+     * 分页获取题目列表（仅管理员可用）
+     *
+     * @param questionQueryRequest
+     * @return
+     */
+     Page<Question> listQuestionByPage(QuestionQueryRequest questionQueryRequest);
 }

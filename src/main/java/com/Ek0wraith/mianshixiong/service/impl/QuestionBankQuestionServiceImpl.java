@@ -1,6 +1,11 @@
 package com.Ek0wraith.mianshixiong.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import com.Ek0wraith.mianshixiong.exception.BusinessException;
+import com.Ek0wraith.mianshixiong.model.entity.Question;
+import com.Ek0wraith.mianshixiong.model.entity.QuestionBank;
+import com.Ek0wraith.mianshixiong.service.QuestionBankService;
+import com.Ek0wraith.mianshixiong.service.QuestionService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -42,6 +47,12 @@ public class QuestionBankQuestionServiceImpl extends ServiceImpl<QuestionBankQue
     @Resource
     private UserService userService;
 
+    @Resource
+    private QuestionService questionService;
+
+    @Resource
+    private QuestionBankService questionBankService;
+
     /**
      * 校验数据
      *
@@ -51,6 +62,18 @@ public class QuestionBankQuestionServiceImpl extends ServiceImpl<QuestionBankQue
     @Override
     public void validQuestionBankQuestion(QuestionBankQuestion questionBankQuestion, boolean add) {
         ThrowUtils.throwIf(questionBankQuestion == null, ErrorCode.PARAMS_ERROR);
+        // 题库和题目必须存在
+        Long questionId = questionBankQuestion.getQuestionId();
+        if(questionId != null){
+            Question question = questionService.getById(questionId);
+            ThrowUtils.throwIf(question == null, ErrorCode.PARAMS_ERROR, "题目不存在");
+        }
+        Long questionBankId = questionBankQuestion.getQuestionBankId();
+        if(questionBankId != null){
+            QuestionBank questionBank = questionBankService.getById(questionBankId);
+            ThrowUtils.throwIf(questionBank == null, ErrorCode.PARAMS_ERROR, "题库不存在");
+        }
+
         // 不需要校验
 //        // todo 从对象中取值
 //        String title = questionBankQuestion.getTitle();
