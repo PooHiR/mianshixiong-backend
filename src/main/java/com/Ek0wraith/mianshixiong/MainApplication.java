@@ -14,7 +14,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * @from <a href="https://Ek0wraith.top">Ek0wraith的个人博客</a>
  */
 // todo 如需开启 Redis，须移除 exclude 中的内容
-@SpringBootApplication(exclude = {RedisAutoConfiguration.class})
+//@SpringBootApplication(exclude = {RedisAutoConfiguration.class})
+@SpringBootApplication
 @MapperScan("com.Ek0wraith.mianshixiong.mapper")
 @EnableScheduling
 @EnableAspectJAutoProxy(proxyTargetClass = true, exposeProxy = true)
