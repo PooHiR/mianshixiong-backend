@@ -2,8 +2,6 @@
 
 > 作者：[Ek0wraith](https://github.com/PooHiR)
 
-[toc]
-
 ## 模板特点
 
 ### 主流框架 & 特性
