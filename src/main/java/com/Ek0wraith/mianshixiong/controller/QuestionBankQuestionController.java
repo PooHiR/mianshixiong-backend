@@ -1,6 +1,6 @@
 package com.Ek0wraith.mianshixiong.controller;
 
-import com.Ek0wraith.mianshixiong.model.dto.questionBankQuestion.QuestionBankQuestionRemoveRequest;
+import com.Ek0wraith.mianshixiong.model.dto.questionBankQuestion.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -12,9 +12,6 @@ import com.Ek0wraith.mianshixiong.common.ResultUtils;
 import com.Ek0wraith.mianshixiong.constant.UserConstant;
 import com.Ek0wraith.mianshixiong.exception.BusinessException;
 import com.Ek0wraith.mianshixiong.exception.ThrowUtils;
-import com.Ek0wraith.mianshixiong.model.dto.questionBankQuestion.QuestionBankQuestionAddRequest;
-import com.Ek0wraith.mianshixiong.model.dto.questionBankQuestion.QuestionBankQuestionQueryRequest;
-import com.Ek0wraith.mianshixiong.model.dto.questionBankQuestion.QuestionBankQuestionUpdateRequest;
 import com.Ek0wraith.mianshixiong.model.entity.QuestionBankQuestion;
 import com.Ek0wraith.mianshixiong.model.entity.User;
 import com.Ek0wraith.mianshixiong.model.vo.QuestionBankQuestionVO;
@@ -26,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * 题库题目关联接口
@@ -222,5 +220,36 @@ public class QuestionBankQuestionController {
         return ResultUtils.success(result);
     }
 
-    // endregion
+    /**
+     * 批量添加题目到题库（仅管理员可用）
+     * @param questionBankQuestionBatchAddRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/add/batch")
+    public BaseResponse<Boolean> batchAddQuestionToBank(@RequestBody QuestionBankQuestionBatchAddRequest questionBankQuestionBatchAddRequest, HttpServletRequest request){
+        ThrowUtils.throwIf(questionBankQuestionBatchAddRequest == null, ErrorCode.PARAMS_ERROR);
+        User loginUser = userService.getLoginUser(request);
+        Long questionBankId = questionBankQuestionBatchAddRequest.getQuestionBankId();
+        List<Long> questionIdList = questionBankQuestionBatchAddRequest.getQuestionIdList();
+        questionBankQuestionService.batchAddQuestionToBank(questionIdList, questionBankId, loginUser);
+        return ResultUtils.success(true);
+    }
+
+    /**
+     * 批量从题库移除题目（仅管理员可用）
+     * @param questionBankQuestionBatchRemoveRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/remove/batch")
+    public BaseResponse<Boolean> batchRemoveQuestionToBank(@RequestBody QuestionBankQuestionBatchRemoveRequest questionBankQuestionBatchRemoveRequest, HttpServletRequest request){
+        ThrowUtils.throwIf(questionBankQuestionBatchRemoveRequest == null, ErrorCode.PARAMS_ERROR);
+        Long questionBankId = questionBankQuestionBatchRemoveRequest.getQuestionBankId();
+        List<Long> questionIdList = questionBankQuestionBatchRemoveRequest.getQuestionIdList();
+        questionBankQuestionService.batchRemoveQuestionToBank(questionIdList, questionBankId);
+        return ResultUtils.success(true);
+    }
+
+
 }

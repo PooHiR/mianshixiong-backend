@@ -10,6 +10,7 @@ import com.Ek0wraith.mianshixiong.model.vo.QuestionVO;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * 题目服务
@@ -68,5 +69,13 @@ public interface QuestionService extends IService<Question> {
      * @return
      */
     Page<Question> searchFromEs(QuestionQueryRequest questionQueryRequest);
+
+    /**
+     * @description: 批量删除题目
+     * @author: Ek0wraith
+     * @date: 2025/1/15 18:14
+     * @param: questionIdList
+     **/
+    void batchDeleteQuestions(List<Long> questionIdList);
 
 }

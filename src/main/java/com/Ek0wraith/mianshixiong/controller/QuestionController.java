@@ -1,6 +1,7 @@
 package com.Ek0wraith.mianshixiong.controller;
 
 import cn.hutool.json.JSONUtil;
+import com.Ek0wraith.mianshixiong.model.dto.question.*;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.Ek0wraith.mianshixiong.annotation.AuthCheck;
 import com.Ek0wraith.mianshixiong.common.BaseResponse;
@@ -10,10 +11,6 @@ import com.Ek0wraith.mianshixiong.common.ResultUtils;
 import com.Ek0wraith.mianshixiong.constant.UserConstant;
 import com.Ek0wraith.mianshixiong.exception.BusinessException;
 import com.Ek0wraith.mianshixiong.exception.ThrowUtils;
-import com.Ek0wraith.mianshixiong.model.dto.question.QuestionAddRequest;
-import com.Ek0wraith.mianshixiong.model.dto.question.QuestionEditRequest;
-import com.Ek0wraith.mianshixiong.model.dto.question.QuestionQueryRequest;
-import com.Ek0wraith.mianshixiong.model.dto.question.QuestionUpdateRequest;
 import com.Ek0wraith.mianshixiong.model.entity.Question;
 import com.Ek0wraith.mianshixiong.model.entity.User;
 import com.Ek0wraith.mianshixiong.model.vo.QuestionVO;
@@ -252,5 +249,13 @@ public class QuestionController {
         ThrowUtils.throwIf(size > 200, ErrorCode.PARAMS_ERROR);
         Page<Question> questionPage = questionService.searchFromEs(questionQueryRequest);
         return ResultUtils.success(questionService.getQuestionVOPage(questionPage, request));
+    }
+
+    @PostMapping("/delete/batch")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<Boolean> batchDeleteQuestion(@RequestBody QuestionBatchDeleteRequest questionBatchDeleteRequest){
+        ThrowUtils.throwIf(questionBatchDeleteRequest == null, ErrorCode.PARAMS_ERROR);
+        questionService.batchDeleteQuestions(questionBatchDeleteRequest.getQuestionIdList());
+        return ResultUtils.success(true);
     }
 }
